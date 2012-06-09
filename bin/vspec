@@ -34,14 +34,12 @@ driver_script=",,$$.vim"
 input_script="${args[$((${#args[@]}- 1))]}"
 unset args[$((${#args[@]}- 1))]  # Now holds all {non-standard-runtimepath}s.
 
-
-
-
 cat <<END >"$driver_script"
   function s:main()
     let standard_paths = split(&runtimepath, ',')[1:-2]
     let non_standard_paths = reverse(['$(echo "${args[@]}" |
                                          sed "s/  */', '/g")'])
+    call insert(non_standard_paths, '$(cd $(dirname $0)/..; pwd)', 0)
     let all_paths = copy(standard_paths)
     for i in non_standard_paths
       let all_paths = [i] + all_paths + [i . '/after']
